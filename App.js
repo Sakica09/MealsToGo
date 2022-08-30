@@ -10,15 +10,13 @@ import { Navigation } from "./src/infrastructure/navigator";
 import { FavouritesContextProvider } from "./src/services/favourites/favourites.context";
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
-import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
-// TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
 
 import {
   useFonts as useOswald,
   Oswald_400Regular,
 } from "@expo-google-fonts/oswald";
 import { useFonts as useLato, Lato_400Regular } from "@expo-google-fonts/lato";
+import { AuthenticationContextProvider } from "./src/services/authentication/authentication.context";
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
@@ -42,40 +40,22 @@ export default function App() {
     Lato_400Regular,
   });
 
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-
-  useEffect(() => {
-    const auth = getAuth();
-    setTimeout(() => {
-      signInWithEmailAndPassword(auth, "mo@binni.io", "test1234")
-        .then((user) => {
-          // Signed in
-          console.log(user);
-          setIsAuthenticated(true);
-          // ...
-        })
-        .catch((e) => {
-          console.log(e);
-        });
-    }, 2000);
-  }, []);
-
   if (!oswaldLoaded || !latoLoaded) {
     return null;
   }
 
-  if (!isAuthenticated) return null;
-
   return (
     <>
       <ThemeProvider theme={theme}>
-        <FavouritesContextProvider>
-          <LocationContextProvider>
-            <RestaurantsContextProvider>
-              <Navigation />
-            </RestaurantsContextProvider>
-          </LocationContextProvider>
-        </FavouritesContextProvider>
+        <AuthenticationContextProvider>
+          <FavouritesContextProvider>
+            <LocationContextProvider>
+              <RestaurantsContextProvider>
+                <Navigation />
+              </RestaurantsContextProvider>
+            </LocationContextProvider>
+          </FavouritesContextProvider>
+        </AuthenticationContextProvider>
       </ThemeProvider>
       <ExpoStatusBar style="auto" />
     </>
