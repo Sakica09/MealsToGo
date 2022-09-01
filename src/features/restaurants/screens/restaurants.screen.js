@@ -1,23 +1,18 @@
 import React, { useContext, useState } from "react";
-import { View } from "react-native";
-import { Searchbar, ActivityIndicator, Colors } from "react-native-paper";
-import { FlatList, TouchableOpacity } from "react-native";
+import { ActivityIndicator, Colors } from "react-native-paper";
+import { TouchableOpacity } from "react-native";
 import styled from "styled-components/native";
 
 import { SafeArea } from "../../../components/utility/safe-area.component";
 import { RestaurantInfoCard } from "../components/restaurant-info.card";
 import { Spacer } from "../components/spacer/spacer.component";
+import { FadeInView } from "../../../components/animations/fade.animations";
 
 import { RestaurantsContext } from "../../../services/restaurants/restaurants.context";
 import { FavouritesBar } from "../../../components/favourites/favourites-bar.component";
 import { FavouritesContext } from "../../../services/favourites/favourites.context";
 import { Search } from "../components/search.component";
-
-const RestaurantList = styled(FlatList).attrs({
-  contentContainerStyle: {
-    padding: 16,
-  },
-})``;
+import { RestaurantList } from "../components/restaurant-list";
 
 const Loading = styled(ActivityIndicator)`
   margin-left: -25px;
@@ -30,16 +25,16 @@ const LoadingContainter = styled.View`
 `;
 
 export const RestaurantsScreen = ({ navigation }) => {
-  const { isLoading, error, restaurants } = useContext(RestaurantsContext);
+  const { isLoading, restaurants } = useContext(RestaurantsContext);
   const { favourites } = useContext(FavouritesContext);
   const [isToggled, setIsToggled] = useState(false);
 
   return (
     <SafeArea>
       {isLoading && (
-        <View style={{ position: "absolute", top: "50%", left: "50%" }}>
+        <LoadingContainter>
           <Loading size={50} animating={true} color={Colors.blue300} />
-        </View>
+        </LoadingContainter>
       )}
       <Search
         isFavouriteToggled={isToggled}
@@ -63,7 +58,9 @@ export const RestaurantsScreen = ({ navigation }) => {
               }
             >
               <Spacer position="bottom" size="large">
-                <RestaurantInfoCard restaurant={item} />
+                <FadeInView>
+                  <RestaurantInfoCard restaurant={item} />
+                </FadeInView>
               </Spacer>
             </TouchableOpacity>
           );
